@@ -1052,19 +1052,49 @@ func resolveAgentConfigInternal(townRoot, rigPath string) *RuntimeConfig {
 	// Load rig-level custom agent registry if it exists (for per-rig custom agents)
 	_ = LoadRigAgentRegistry(RigAgentRegistryPath(rigPath))
 
-	// Determine which agent name to use
-	agentName := ""
-	if rigSettings != nil && rigSettings.Agent != "" {
+	// Determine which agent name to use.
+	// Check wisp layer first — `gt rig config set <rig> agent <name>` writes here.
+	// Wisp is the highest-priority transient override, consistent with the
+	// rig config layer order: wisp → bead → settings → system.
+	agentName := readWispAgent(townRoot, rigPath)
+	if agentName == "" && rigSettings != nil && rigSettings.Agent != "" {
 		agentName = rigSettings.Agent
-	} else if townSettings.DefaultAgent != "" {
+	}
+	if agentName == "" && townSettings.DefaultAgent != "" {
 		agentName = townSettings.DefaultAgent
-	} else {
+	}
+	if agentName == "" {
 		agentName = "claude" // ultimate fallback
 	}
 
 	rc := lookupAgentConfig(agentName, townSettings, rigSettings)
 	rc.ResolvedAgent = agentName
 	return rc
+}
+
+// readWispAgent reads the "agent" key from the wisp config layer for a rig.
+// Returns empty string if not set or unreadable. Reads the file directly to
+// avoid an import cycle (config cannot import wisp).
+func readWispAgent(townRoot, rigPath string) string {
+	if rigPath == "" || townRoot == "" {
+		return ""
+	}
+	rigName := filepath.Base(rigPath)
+	wispPath := filepath.Join(townRoot, ".beads-wisp", "config", rigName+".json")
+	data, err := os.ReadFile(wispPath)
+	if err != nil {
+		return ""
+	}
+	var doc struct {
+		Values map[string]interface{} `json:"values"`
+	}
+	if err := json.Unmarshal(data, &doc); err != nil {
+		return ""
+	}
+	if agent, ok := doc.Values["agent"].(string); ok {
+		return agent
+	}
+	return ""
 }
 
 // ResolveAgentConfigWithOverride resolves the agent configuration for a rig, with an optional override.
