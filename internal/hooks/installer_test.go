@@ -225,6 +225,37 @@ func TestInstallForRole_CodexRoleAware(t *testing.T) {
 	}
 }
 
+func TestInstallForRole_KiroRoleAware(t *testing.T) {
+	gtBin := resolveGTBinary()
+
+	dir := t.TempDir()
+	err := InstallForRole("kiro", dir, dir, "polecat", ".kiro/agents", "gastown.json", false)
+	if err != nil {
+		t.Fatalf("InstallForRole(kiro, polecat): %v", err)
+	}
+
+	got, _ := os.ReadFile(filepath.Join(dir, ".kiro/agents", "gastown.json"))
+	want, _ := templateFS.ReadFile("templates/kiro/gastown-autonomous.json")
+	// Normalize {{GT_BIN}} substitution for comparison
+	gotNorm := strings.ReplaceAll(string(got), gtBin, "{{GT_BIN}}")
+	if gotNorm != string(want) {
+		t.Error("kiro autonomous: content mismatch")
+	}
+
+	dir2 := t.TempDir()
+	err = InstallForRole("kiro", dir2, dir2, "crew", ".kiro/agents", "gastown.json", false)
+	if err != nil {
+		t.Fatalf("InstallForRole(kiro, crew): %v", err)
+	}
+
+	got, _ = os.ReadFile(filepath.Join(dir2, ".kiro/agents", "gastown.json"))
+	want, _ = templateFS.ReadFile("templates/kiro/gastown-interactive.json")
+	gotNorm = strings.ReplaceAll(string(got), gtBin, "{{GT_BIN}}")
+	if gotNorm != string(want) {
+		t.Error("kiro interactive: content mismatch")
+	}
+}
+
 func TestInstallForRole_CopilotRoleAware(t *testing.T) {
 	// Copilot uses gastown-autonomous.json / gastown-interactive.json naming
 	dir := t.TempDir()

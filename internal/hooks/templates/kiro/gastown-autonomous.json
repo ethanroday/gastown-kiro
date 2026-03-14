@@ -1,0 +1,29 @@
+{
+  "name": "gastown",
+  "description": "Gas Town autonomous worker agent",
+  "tools": ["*"],
+  "allowedTools": ["*"],
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "{{GT_BIN}} prime --hook && {{GT_BIN}} mail check --inject"
+      }
+    ],
+    "userPromptSubmit": [
+      {
+        "command": "{{GT_BIN}} mail check --inject"
+      }
+    ],
+    "preToolUse": [
+      {
+        "matcher": "execute_bash",
+        "command": "INPUT=$(cat) && TOOL_INPUT=$(echo \"$INPUT\" | jq -r '.tool_input // empty') && CMD=$(echo \"$TOOL_INPUT\" | jq -r '.command // empty') && if echo \"$CMD\" | grep -qE 'gh\\s+pr\\s+create|git\\s+checkout\\s+-b|git\\s+switch\\s+-c'; then {{GT_BIN}} tap guard pr-workflow 2>/dev/null || exit 2; fi"
+      }
+    ],
+    "stop": [
+      {
+        "command": "{{GT_BIN}} costs record >/dev/null 2>&1 &"
+      }
+    ]
+  }
+}
