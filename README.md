@@ -93,6 +93,7 @@ Git-backed issue tracking system that stores work state as structured data.
 - **tmux 3.0+** - recommended for full experience
 - **Claude Code CLI** (default runtime) - [claude.ai/code](https://claude.ai/code)
 - **Codex CLI** (optional runtime) - [developers.openai.com/codex/cli](https://developers.openai.com/codex/cli)
+- **Kiro CLI** (optional runtime) - [kiro.dev](https://kiro.dev)
 
 ### Setup (Docker-Compose below)
 
@@ -364,7 +365,7 @@ gt feed                     # Real-time activity feed (TUI)
 gt feed --problems          # Start in problems view (stuck agent detection)
 ```
 
-**Built-in agent presets**: `claude`, `gemini`, `codex`, `cursor`, `auggie`, `amp`, `opencode`, `copilot`, `pi`, `omp`
+**Built-in agent presets**: `claude`, `gemini`, `codex`, `cursor`, `auggie`, `amp`, `opencode`, `copilot`, `pi`, `omp`, `kiro`
 
 ### Convoy (Work Tracking)
 
