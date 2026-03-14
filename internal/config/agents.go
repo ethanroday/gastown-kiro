@@ -36,6 +36,8 @@ const (
 	// AgentOmp is Oh My Pi (OMP) — Pi fork with hook-based lifecycle.
 	// Inspired by github.com/ProbabilityEngineer/pi-mono gastown integration.
 	AgentOmp AgentPreset = "omp"
+	// AgentKiro is Kiro CLI (AWS).
+	AgentKiro AgentPreset = "kiro"
 )
 
 // AgentPresetInfo contains the configuration details for an agent preset.
@@ -421,6 +423,33 @@ var builtinPresets = map[AgentPreset]*AgentPresetInfo{
 		SupportsForkSession: false,
 		NonInteractive: &NonInteractiveConfig{
 			PromptFlag: "--prompt",
+		},
+	},
+	AgentKiro: {
+		Name:                AgentKiro,
+		Command:             "kiro-cli-chat",
+		Args:                []string{"chat", "--trust-all-tools", "--agent", "gastown"},
+		ProcessNames:        []string{"kiro-cli-chat", "node"}, // Kiro runs as a Rust binary or Node.js
+		SessionIDEnv:        "",                                // Kiro manages sessions per-directory
+		ContinueFlag:        "--resume",                        // Resumes most recent session from directory
+		ResumeStyle:         "flag",
+		SupportsHooks:       true, // Kiro agent configs have hooks: {agentSpawn, userPromptSubmit}
+		SupportsForkSession: false,
+		NonInteractive: &NonInteractiveConfig{
+			PromptFlag: "--no-interactive",
+		},
+		// Runtime defaults
+		PromptMode:           "arg",
+		ConfigDir:            ".kiro",
+		HooksProvider:        "kiro",
+		HooksDir:             ".kiro/agents",
+		HooksSettingsFile:    "gastown.json",
+		ReadyDelayMs:         5000,
+		InstructionsFile:     "AGENTS.md",
+		HasTurnBoundaryDrain: true, // userPromptSubmit hook drains nudge queue
+		// ACP support
+		ACP: &ACPConfig{
+			Command: "acp",
 		},
 	},
 }

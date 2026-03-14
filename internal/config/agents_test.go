@@ -19,7 +19,7 @@ func isClaudeCmd(cmd string) bool {
 func TestBuiltinPresets(t *testing.T) {
 	t.Parallel()
 	// Ensure all built-in presets are accessible
-	presets := []AgentPreset{AgentClaude, AgentGemini, AgentCodex, AgentCursor, AgentAuggie, AgentAmp, AgentOpenCode, AgentCopilot, AgentPi, AgentOmp}
+	presets := []AgentPreset{AgentClaude, AgentGemini, AgentCodex, AgentCursor, AgentAuggie, AgentAmp, AgentOpenCode, AgentCopilot, AgentPi, AgentOmp, AgentKiro}
 
 	for _, preset := range presets {
 		info := GetAgentPreset(preset)
@@ -57,6 +57,7 @@ func TestGetAgentPresetByName(t *testing.T) {
 		{"copilot", AgentCopilot, false},   // Built-in GitHub Copilot CLI agent
 		{"pi", AgentPi, false},             // Pi Coding Agent
 		{"omp", AgentOmp, false},           // Oh My Pi
+		{"kiro", AgentKiro, false},         // Kiro CLI
 		{"unknown", "", true},
 	}
 
@@ -89,6 +90,7 @@ func TestRuntimeConfigFromPreset(t *testing.T) {
 		{AgentAuggie, "auggie"},
 		{AgentAmp, "amp"},
 		{AgentCopilot, "copilot"},
+		{AgentKiro, "kiro-cli-chat"},
 	}
 
 	for _, tt := range tests {
@@ -140,6 +142,7 @@ func TestIsKnownPreset(t *testing.T) {
 		{"copilot", true},  // Built-in GitHub Copilot CLI agent
 		{"pi", true},       // Pi Coding Agent
 		{"omp", true},      // Oh My Pi
+		{"kiro", true},     // Kiro CLI
 		{"unknown", false},
 		{"chatgpt", false},
 	}
@@ -632,7 +635,7 @@ func TestGetProcessNames(t *testing.T) {
 func TestListAgentPresetsMatchesConstants(t *testing.T) {
 	t.Parallel()
 	// Ensure all AgentPreset constants are returned by ListAgentPresets
-	allConstants := []AgentPreset{AgentClaude, AgentGemini, AgentCodex, AgentCursor, AgentAuggie, AgentAmp, AgentOpenCode, AgentCopilot, AgentPi, AgentOmp}
+	allConstants := []AgentPreset{AgentClaude, AgentGemini, AgentCodex, AgentCursor, AgentAuggie, AgentAmp, AgentOpenCode, AgentCopilot, AgentPi, AgentOmp, AgentKiro}
 	presets := ListAgentPresets()
 
 	// Convert to map for quick lookup

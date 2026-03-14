@@ -147,19 +147,25 @@ Every field from the `AgentPresetInfo` struct in `internal/config/agents.go`:
   "agents": {
     "kiro": {
       "name": "kiro",
-      "command": "kiro",
-      "args": ["--autonomous"],
-      "process_names": ["kiro", "node"],
-      "session_id_env": "KIRO_SESSION_ID",
-      "resume_flag": "--resume",
+      "command": "kiro-cli-chat",
+      "args": ["chat", "--trust-all-tools", "--agent", "gastown"],
+      "process_names": ["kiro-cli-chat", "node"],
+      "continue_flag": "--resume",
       "resume_style": "flag",
+      "supports_hooks": true,
       "prompt_mode": "arg",
-      "ready_prompt_prefix": "> ",
+      "config_dir": ".kiro",
+      "hooks_provider": "kiro",
+      "hooks_dir": ".kiro/agents",
+      "hooks_settings_file": "gastown.json",
       "ready_delay_ms": 5000,
       "instructions_file": "AGENTS.md",
+      "has_turn_boundary_drain": true,
       "non_interactive": {
-        "prompt_flag": "-p",
-        "output_flag": "--json"
+        "prompt_flag": "--no-interactive"
+      },
+      "acp": {
+        "command": "acp"
       }
     }
   }
@@ -487,6 +493,7 @@ Current agent capabilities at a glance:
 | Auggie | No | `--resume` (flag) | No | No | arg | auggie |
 | AMP | No | `threads continue` (subcmd) | No | No | arg | amp |
 | OpenCode | Yes (plugin JS) | No | `run` subcmd | No | none | opencode, node, bun |
+| Kiro | Yes (agent config) | `--resume` (flag, no ID) | `--no-interactive` | No | arg | kiro-cli-chat, node |
 
 ---
 

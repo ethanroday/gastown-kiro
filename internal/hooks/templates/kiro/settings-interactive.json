@@ -1,0 +1,30 @@
+{
+  "name": "gastown",
+  "description": "Gas Town interactive agent",
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "{{GT_BIN}} prime --hook"
+      }
+    ],
+    "userPromptSubmit": [
+      {
+        "command": "{{GT_BIN}} mail check --inject"
+      }
+    ]
+  },
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "grep",
+    "glob"
+  ],
+  "allowedTools": [
+    "read",
+    "write",
+    "shell",
+    "grep",
+    "glob"
+  ]
+}
