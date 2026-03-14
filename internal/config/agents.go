@@ -36,6 +36,8 @@ const (
 	// AgentOmp is Oh My Pi (OMP) — Pi fork with hook-based lifecycle.
 	// Inspired by github.com/ProbabilityEngineer/pi-mono gastown integration.
 	AgentOmp AgentPreset = "omp"
+	// AgentKiro is Kiro CLI.
+	AgentKiro AgentPreset = "kiro"
 )
 
 // AgentPresetInfo contains the configuration details for an agent preset.
@@ -422,6 +424,28 @@ var builtinPresets = map[AgentPreset]*AgentPresetInfo{
 		NonInteractive: &NonInteractiveConfig{
 			PromptFlag: "--prompt",
 		},
+	},
+	AgentKiro: {
+		Name:                AgentKiro,
+		Command:             "kiro-cli",
+		Args:                []string{"chat", "--trust-all-tools", "--agent", "gastown"},
+		ProcessNames:        []string{"kiro-cli", "node"},
+		SessionIDEnv:        "",
+		ResumeFlag:          "--resume",
+		ResumeStyle:         "flag",
+		SupportsHooks:       true,
+		SupportsForkSession: false,
+		NonInteractive: &NonInteractiveConfig{
+			PromptFlag: "--no-interactive",
+		},
+		PromptMode:           "arg",
+		ConfigDir:            ".kiro",
+		HooksProvider:        "kiro",
+		HooksDir:             ".kiro/agents",
+		HooksSettingsFile:    "gastown.json",
+		ReadyDelayMs:         8000,
+		InstructionsFile:     "AGENTS.md",
+		HasTurnBoundaryDrain: true,
 	},
 }
 
